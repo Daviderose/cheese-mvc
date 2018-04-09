@@ -7,18 +7,16 @@
 
     <p th:unless="${cheeses} and ${cheeses.size()}">no cheese :(</p>
 
-    <div th:each="cheese : ${cheeses}">
-        <div>
-            <label>Title
-            <p th:text="${cheese.key}">Key</p>
-            </label>
+        <div th:each="cheese : ${cheeses}">
+            <div class="cheese">
+                <div>
+                    <h2 th:text="${cheese.key}">Key</h2>
+                </div>
+                <div>
+                    <h4 th:text="${cheese.value}">Value</h4>
+                </div>
+            </div>
         </div>
-        <div>
-            <label>Description
-            <p th:text="${cheese.value}">Value</p>
-            </label>
-        </div>
-    </div>
 
 </body>
 </html>

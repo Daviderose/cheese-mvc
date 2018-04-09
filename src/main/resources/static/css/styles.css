@@ -5,3 +5,22 @@ body {
 .nav-link {
     color: white;
 }
+
+.cheese {
+    background-color: #669999;
+    color: white;
+    padding: 20px;
+    margin: 0px;
+}
+
+h2 {
+    text-align: center;
+}
+
+h4 {
+    text-align: center;
+}
+
+label {
+    font-weight: bold;
+}
