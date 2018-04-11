@@ -6,14 +6,26 @@
 
 <h1 th:text="${title}">Default Title</h1>
 
-<form method="post">
+<form method="post" style="max-width:600px;" th:object="${cheese}">
     <div class="form-group">
-       <label>Cheese Name:</label>
-        <input type="text" class="form-control" name="cheeseName" />
+       <label th:for="name">Cheese Name:</label>
+        <input class="form-control" th:field="*{name}" />
+        <span th:errors="*{name}" class="error"> </span>
     </div>
     <div class="form-group">
-        <label>Describe your delicious cheese:</label>
-        <input type="textarea" class="form-control" name="cheeseDescription" />
+        <label th:for="description">Describe your delicious cheese:</label>
+        <input class="form-control" th:field="*{description}" />
+        <span th:errors="*{description}" class="error"> </span>
+    </div>
+
+
+    <div class="form-group">
+        <label th:for="type">Type</label>
+        <select th:field="*{type}">
+            <option th:each="cheeseType : ${cheeseTypes}"
+                    th:text="${cheeseType.name}"
+                    th:value="${cheeseType}"></option>
+        </select>
     </div>
     <button type="submit" class="btn btn-warning">Add Cheese</button>
 </form>
