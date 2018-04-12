@@ -1,8 +1,9 @@
 package org.launchcode.cheesemvc.controllers;
 
 
+import org.launchcode.cheesemvc.models.Category;
 import org.launchcode.cheesemvc.models.Cheese;
-import org.launchcode.cheesemvc.models.CheeseType;
+import org.launchcode.cheesemvc.models.data.CategoryDao;
 import org.launchcode.cheesemvc.models.data.CheeseDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 import javax.validation.Valid;
+import java.util.List;
+
 
 @Controller
 @RequestMapping("cheese")
@@ -22,6 +25,9 @@ public class CheeseController {
 
     @Autowired
     private CheeseDao cheeseDao;
+
+    @Autowired
+    private CategoryDao categoryDao;
 
     // Request path: /cheese
     @RequestMapping(value = "")
@@ -37,19 +43,23 @@ public class CheeseController {
     public String displayAddCheeseForm(Model model) {
         model.addAttribute("title", "Add Cheese");
         model.addAttribute(new Cheese());
-        model.addAttribute("cheeseTypes", CheeseType.values());
+        model.addAttribute("categories", categoryDao.findAll());
         return "cheese/add";
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String processAddCheeseForm(@ModelAttribute @Valid Cheese newCheese,
-                                       Errors errors, Model model) {
+                                       Errors errors, @RequestParam int categoryId,
+                                       Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Cheese");
+            model.addAttribute("categories", categoryDao.findAll());
             return "cheese/add";
         }
 
+        Category cat = categoryDao.findById(categoryId).orElse(null);
+        newCheese.setCategory(cat);
         cheeseDao.save(newCheese);
         return "redirect:";
     }
@@ -71,6 +81,17 @@ public class CheeseController {
         }
 
         return "redirect:";
+    }
+
+    @RequestMapping(value = "category", method = RequestMethod.GET)
+    public String category(Model model, @RequestParam int id) {
+
+        Category cat = categoryDao.findById(id).orElse(null);
+        List<Cheese> cheeses = cat.getCheeses();
+        model.addAttribute("cheeses", cheeses);
+        model.addAttribute("title", "Cheeses in Category" + cat.getName());
+        return "cheese/index";
+
     }
 
 }
