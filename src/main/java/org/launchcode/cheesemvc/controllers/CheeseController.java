@@ -3,16 +3,14 @@ package org.launchcode.cheesemvc.controllers;
 
 import org.launchcode.cheesemvc.models.Category;
 import org.launchcode.cheesemvc.models.Cheese;
+import org.launchcode.cheesemvc.models.Menu;
 import org.launchcode.cheesemvc.models.data.CategoryDao;
 import org.launchcode.cheesemvc.models.data.CheeseDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
@@ -92,6 +90,29 @@ public class CheeseController {
         model.addAttribute("title", "Cheeses in Category" + cat.getName());
         return "cheese/index";
 
+    }
+
+    @RequestMapping(value = "edit/{cheeseId}", method = RequestMethod.GET)
+    public String displayEditForm(Model model, @PathVariable int cheeseId) {
+        Cheese cheese = cheeseDao.findById(cheeseId).orElse(null);
+        model.addAttribute("name", cheese.getName());
+        model.addAttribute("description", cheese.getDescription());
+        model.addAttribute("cheeseId", cheese.getId());
+        model.addAttribute("categories", categoryDao.findAll());
+
+        return "cheese/edit";
+    }
+
+    @RequestMapping(value = "edit/{cheeseId}", method = RequestMethod.POST)
+    public String processEditForm(@PathVariable int cheeseId, @RequestParam String name,
+                                  @RequestParam String description, @RequestParam int categoryId ) {
+        Cheese cheese = cheeseDao.findById(cheeseId).orElse(null);
+        Category cat = categoryDao.findById(categoryId).orElse(null);
+        cheese.setName(name);
+        cheese.setDescription(description);
+        cheese.setCategory(cat);
+        cheeseDao.save(cheese);
+        return "redirect:/cheese";
     }
 
 }
